@@ -433,7 +433,7 @@ function! fzf#vim#_lines(all)
       let longest_name = max([longest_name, len(bufnames[b])])
     endfor
   endif
-  let len_bufnames = min([15, longest_name])
+  let len_bufnames = min([100, longest_name]) " HENRY: LENGTH OF FILENAME IN LEFT SPLIT FOR :LINES COMMAND
   for b in s:buflisted()
     let lines = getbufline(b, 1, "$")
     if empty(lines)
