@@ -1168,6 +1168,7 @@ function! s:yank_to_register(data)
   silent! let @+ = a:data
 endfunction
 
+" HENRY CUSTOM EDIT FOR GIT DIFFS
 function! s:commits_sink(lines)
   if len(a:lines) < 2
     return
@@ -1181,24 +1182,22 @@ function! s:commits_sink(lines)
   end
 
   let diff = a:lines[0] == 'ctrl-d'
-  let cmd = s:action_for(a:lines[0], 'e')
-  let buf = bufnr('')
-  for idx in range(1, len(a:lines) - 1)
-    let sha = matchstr(a:lines[idx], pat)
-    if !empty(sha)
-      if diff
-        if idx > 1
-          execute 'tab sb' buf
-        endif
-        execute 'Gdiff' sha
-      else
-        " Since fugitive buffers are unlisted, we can't keep using 'e'
-        let c = (cmd == 'e' && idx > 1) ? 'tab split' : cmd
-        "execute c FugitiveFind(sha)
-        execute 'Gdiff' sha
-      endif
-    endif
-  endfor
+  if diff
+      return
+  endif
+
+  " HENRY CUSTOM EDIT FOR GIT DIFFS
+  let selected_commits = len(a:lines) - 1
+  let sha1 = matchstr(a:lines[1], pat)
+
+  if selected_commits > 1
+    let sha2 = matchstr(a:lines[2], pat)
+    execute 'Gedit' sha2 . ':%'
+    execute 'Gdiffsplit' sha1
+    let g:henry_gdiffsplit_on = 1
+  else
+    execute 'Gdiffsplit' sha1
+  endif
 endfunction
 
 function! s:commits(buffer_local, args)
