@@ -814,6 +814,10 @@ function! fzf#vim#grep(grep_command, has_column, ...)
   \             '--delimiter', ':', '--preview-window', '+{2}-/2']
   \}
   function! opts.sink(lines)
+    let diff = a:lines[0] == 'ctrl-d'
+    if diff
+        return
+    endif
     return s:ag_handler(a:lines, self.column)
   endfunction
   let opts['sink*'] = remove(opts, 'sink')
